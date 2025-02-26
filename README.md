@@ -1,8 +1,13 @@
-Todo App: A Full-Stack Todo Application with Next.js and FastAPI
+**Todo App: A Full-Stack Todo Application with Next.js and FastAPI**
+
 Features
-Task Creation: Add new tasks easily.
-Task Management: Mark tasks as completed or delete them.
-Real-time Updates: See tasks instantly with seamless frontend-backend communication.
+
+-Task Creation: Add new tasks easily.
+
+-Task Management: Mark tasks as completed or delete them.
+
+-Real-time Updates: See tasks instantly with seamless frontend-backend communication.
+
 Full-Stack Architecture: Leverages FastAPI as the backend API and Next.js for the frontend.
 
 Tech Stack
