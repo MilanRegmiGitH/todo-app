@@ -1,4 +1,4 @@
-**Todo App: A Full-Stack Todo Application with Next.js and FastAPI**
+## Todo App: A Full-Stack Todo Application with Next.js and FastAPI
 
 Features
 
@@ -10,7 +10,7 @@ Features
 
 Full-Stack Architecture: Leverages FastAPI as the backend API and Next.js for the frontend.
 
-Tech Stack
+## Tech Stack
 Frontend:
 
 Next.js: React framework for building modern web apps.
@@ -21,7 +21,7 @@ Backend:
 FastAPI: High-performance web framework for building APIs with Python.
 SQLite: Lightweight database to store tasks (for simplicity)
 
-INSTALLATION
+## INSTALLATION
 1. Clone the repository
 ```
 git clone https://github.com/MilanRegmiGitH/todo-app
@@ -37,7 +37,7 @@ npm install
 cd backend
 pip install -r requirements.txt
 ```
-RUNNING THE APPLICATION
+## RUNNING THE APPLICATION
 1. Start the Backend
 ```
 cd backend
