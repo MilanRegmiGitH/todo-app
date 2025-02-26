@@ -23,22 +23,29 @@ SQLite: Lightweight database to store tasks (for simplicity)
 
 INSTALLATION
 1. Clone the repository
+```
 git clone https://github.com/MilanRegmiGitH/todo-app
 cd todo-app
-
-2. Install frontend dependencies
+```
+3. Install frontend dependencies
+```
 cd frontend/frontend
 npm install
-
+```
 3. Install backend dependencies
+```
 cd backend
 pip install -r requirements.txt
-
+```
 RUNNING THE APPLICATION
 1. Start the Backend
+```
 cd backend
 uvicorn main:app --reload
-2. Start the Frontend (Next.js)
+```
+3. Start the Frontend (Next.js)
+```
 cd frontend
 npm run dev
+```
 The frontend will run on http://localhost:3000.
