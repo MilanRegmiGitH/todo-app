@@ -1,5 +1,10 @@
+import Link from "next/link"
+
+
 export default function App(){
   return(
-    <h1 className="text-center mt-96">Hello WORLD</h1>
+    <Link href="/signup">
+      <h1 className="text-center mt-96">GET STARTED</h1>
+    </Link>
   )
 }

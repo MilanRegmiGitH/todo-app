@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 export default function Login() {
   const router = useRouter();
-  const [formData, setFormData] = useState({ username: "", password: "" }); 
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,25 +22,29 @@ export default function Login() {
     setLoading(true);
     console.log(formData);
     try {
-      const response = await axios.post(API_PATH.AUTH.LOGIN, formData, {
+      const response = await axios.post(API_PATH.AUTH.SIGN_UP, formData, {
         headers: { "Content-Type": "application/json" },
       });
-        if (!response.ok) {
-          throw new Error("Login Failed");
-        }
+      if (!response) {
+        throw new Error("Login Failed");
+      }
       toast.success("Created Account!", {
         description: "You have been redirected to login",
         className: "text-center text-black-500",
       });
       router.push("/login");
     } catch (err) {
-      toast.error("Login Failed", {
-        description: err.message || "An error occurred during login",
-        action: {
-          label: "Retry?",
-          onClick: () => handleSubmit(e),
-        },
-      });
+      if (err.response && err.response.data) {
+        toast.error(err.response.data.detail || "Account creation failed.");
+      } else {
+        toast.error("Account creation failed", {
+          description: err.message || "An error occurred during login",
+          action: {
+            label: "Retry?",
+            onClick: () => handleSubmit(e),
+          },
+        });
+      }
     } finally {
       setLoading(false);
     }

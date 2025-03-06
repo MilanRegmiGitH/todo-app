@@ -1,18 +1,23 @@
-from schemas import LoginRequest, Token, TaskCreate, TaskResponse
+from schemas import LoginRequest, Token, TaskCreate, TaskResponse, TaskUpdate
 from auth import create_access_token, authenticate_user, hash_password, get_current_user
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi import FastAPI, Depends, HTTPException, Body
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
 import models, database
 from sqlalchemy.orm import Session
 from models import User, Task
+import logging
 
-
+logging.basicConfig(level=logging.INFO)
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI()
 
-
+app.add_middleware(CORSMiddleware, allow_origins = ["http://localhost:3000"],
+                   allow_credentials = True, 
+                   allow_methods = ["*"],
+                   allow_headers = ["*"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -29,11 +34,15 @@ def login(form_data:Annotated[OAuth2PasswordRequestForm, Depends()], db:Annotate
 @app.post("/register")
 def register_user(user:LoginRequest, db: Annotated[Session, Depends(database.get_db)]):
     hashed_password = hash_password(user.password)
+    existing_user = db.query(User).filter(User.username == user.username).first()
+    if(existing_user):
+        raise HTTPException(status_code=401, detail="The user already exists")
     db_user = models.User(username=user.username, password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return {"message":"User created Successfully"}
+
 
 # Create Tasks
 @app.post("/tasks", response_model=TaskResponse)
@@ -57,17 +66,44 @@ def get_tasks(db:Annotated[Session, Depends(database.get_db)], current_user:Anno
 
 # delete tasks
 @app.delete("/tasks/{task_id}")
-def delete_task(db:Annotated[Session, Depends(database.get_db)], current_user:Annotated[User, Depends(get_current_user)], task_id:int):
+def delete_task(task_id:int,db:Annotated[Session, Depends(database.get_db)], current_user:Annotated[User, Depends(get_current_user)]):
     db_task = db.query(Task).filter(Task.id == task_id).first()
     #check if the task exist
     if not db_task:
-        raise HTTPException(status_code=401, detail="The task does not exist")
-
+        logging.info(f"Task{task_id} not found")
+        raise HTTPException(status_code=404, detail="The task does not exist")
     # ensure task belongs to current user
     if(db_task.user_id != current_user.id):
-        raise HTTPException(status_code=401, detail="Unauthorized to delete task")
+        logging.info(f"User {current_user.id} unauhtorized to delete task")
+        raise HTTPException(status_code=403, detail="Unauthorized to delete task")
     # Deleting task
     db.delete(db_task)
     db.commit()
-    return{"message":"Task deleted successfully"}
+    db.flush()
+    db.expire_all()
+    logging.info(f"Task{task_id} deleted successfully")
+    return {"message": f"Task {task_id} deleted successfully"}
 
+
+# update tasks
+@app.patch("/tasks/{task_id}")
+def update_task(task: Annotated[TaskUpdate, Body()],db:Annotated[Session, Depends(database.get_db)], current_user:Annotated[User, Depends(get_current_user)], task_id:int):
+    db_task =db.query(Task).filter(Task.id == task_id).first()
+    if not db_task:
+       raise HTTPException(status_code=404, detail="task not found")
+    if(db_task.user_id != current_user.id):
+        raise HTTPException(status_code=403, detail= "Unauthorized to update this task!")
+    # update the task fields (only the provided fields)
+    if task.title is not None:
+        db_task.title = task.title
+    if task.description is not None:
+        db_task.description = task.description
+    if task.status is not None:
+        db_task.status = task.status
+    if task.end_time is not None:
+        db_task.end_time = task.end_time
+    # commit the changes to the database
+    db.commit()
+    db.refresh(db_task)
+    return({"task":db_task, "message":"Task updated successfully"})
+    

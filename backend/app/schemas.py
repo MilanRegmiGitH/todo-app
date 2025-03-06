@@ -23,4 +23,10 @@ class TaskResponse(TaskCreate):
     id:int
     user_id:int
 
+class TaskUpdate(TaskCreate):
+    title: str | None = None
+    description: str | None = None
+    end_time: datetime | None = None
+    status: str | None = None
+
 

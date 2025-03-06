@@ -12,26 +12,36 @@ import { toast } from "sonner";
 export default function Login() {
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState(null);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log(formData);
+    // console.log(formData);
     try {
-      const response = await axios.post(API_PATH.AUTH.LOGIN, formData, {
-        headers: { "Content-Type": "application/json" },
+      const formDataEncoded = new URLSearchParams();
+      formDataEncoded.append("username", formData.username);
+      formDataEncoded.append("password", formData.password);
+      const response = await axios.post(API_PATH.AUTH.LOGIN, formDataEncoded, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
       });
-      if (!response.ok) {
+      // console.log(response)
+      if (!response) {
         throw new Error("Login Failed");
       }
       const access_token = response.data.access_token;
       sessionStorage.setItem("token", access_token);
       toast.success("Logged in successfully!");
     } catch (err) {
-      toast.error(err.message)
+      if (err.response && err.response.data)
+        toast.error(
+          err.response.data.detail ||
+            "Login Failed. Please check your credentials!"
+        );
+      else {
+        toast.error("An unexpected error occured!")
+      }
     } finally {
       setLoading(false);
     }
@@ -85,9 +95,9 @@ export default function Login() {
             {loading ? "Logging in..." : "Login"}
           </Button>
           <Link href="/signup">
-          <Button variant="link" onClick={()=>{}} type="button">
-            Create account?
-          </Button>
+            <Button variant="link" onClick={() => {}} type="button">
+              Create account?
+            </Button>
           </Link>
         </form>
       </div>
