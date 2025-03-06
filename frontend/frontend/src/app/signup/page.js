@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 export default function Login() {
   const router = useRouter();
-  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "" }); 
   const [loading, setLoading] = useState(false);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
