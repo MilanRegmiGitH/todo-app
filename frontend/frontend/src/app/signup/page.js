@@ -52,10 +52,10 @@ export default function Login() {
 
   return (
     <div className="flex justify-center items-center min-h-screen flex-col ">
-      <h2 className="text-center font-bold text-3xl mb-3 text-white">
+      <h2 className="text-center font-bold text-3xl mb-3 text-primary">
         Sign Up
       </h2>
-      <div className="p-4 bg-purple-400 shadow-lg rounded-md flex flex-row gap-8">
+      <div className="p-4 bg-card shadow-lg rounded-md flex flex-row gap-8">
         <Image
           src="/undraw_sign-up_qamz.svg"
           width={300}

@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const router = useRouter();
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
   const handleChange = (e) => {
@@ -32,6 +34,7 @@ export default function Login() {
       }
       const access_token = response.data.access_token;
       sessionStorage.setItem("token", access_token);
+      router.push('/');
       toast.success("Logged in successfully!");
     } catch (err) {
       if (err.response && err.response.data)
@@ -49,8 +52,8 @@ export default function Login() {
 
   return (
     <div className="flex justify-center items-center min-h-screen flex-col ">
-      <h2 className="text-center font-bold text-3xl mb-3 text-white">Login</h2>
-      <div className="p-4 bg-purple-400 shadow-lg rounded-md flex flex-row gap-8">
+      <h2 className="text-center font-bold text-3xl mb-3 text-primary">Login</h2>
+      <div className="p-4 bg-card shadow-lg rounded-md flex flex-row gap-8">
         <Image
           src="/undraw_authentication_tbfc.svg"
           width={300}
@@ -78,7 +81,7 @@ export default function Login() {
           </Label>
           <Input
             type="password"
-            placeholder="password"
+            placeholder="Password"
             id="password"
             className="mb-16"
             value={formData.password}

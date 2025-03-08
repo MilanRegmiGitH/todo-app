@@ -50,7 +50,8 @@ def create_task(task:Annotated[TaskCreate, Body()], current_user: Annotated[User
     db_task = models.Task(title=task.title,
                           description=task.description,
                           end_time = task.end_time,
-                          user_id = current_user.id
+                          user_id = current_user.id,
+                          status = task.status
                           )
     # add the task 
     db.add(db_task)
